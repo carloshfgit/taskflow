@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>TaskFlow</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <div class="logo">TaskFlow</div>
+        <nav>
+            <a href="#">Entrar</a>
+            <a href="#" class="btn-primary">Criar Conta</a>
+        </nav>
+    </header>
+
+    <main class="hero">
+        <div class="hero-text">
+            <h1>Organize suas tarefas com eficiência.</h1>
+            <p>Gerencie seu fluxo de trabalho de forma visual, simples e direta com o sistema Kanban do TaskFlow.</p>
+            <button class="btn-primary" id="btn-start">Começar Agora</button>
+        </div>
+
+        <div class="hero-image">
+            <img src="/static/img/laptop_img.png" alt="Ilustração de produtividade">
+        </div>
+    </main>
+
+    <section class="features">
+        <div class="feature-card">
+            <h3>Organização Simples</h3>
+            <p>Mantenha todas as suas tarefas em um só lugar.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>Acompanhe seu Progresso</h3>
+            <p>Visualize o status de cada atividade facilmente.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>Produtividade Real</h3>
+            <p>Foque no que realmente importa ao longo do dia.</p>
+        </div>
+    </section>
+
+    <footer>
+        © 2025 TaskFlow — Todos os direitos reservados.
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
