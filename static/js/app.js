@@ -48,14 +48,35 @@ addButtons.forEach(btn => {
 // ============================================================
 //  CRIAR TAREFA
 // ============================================================
-function createTask(title, description, status = "todo") {
-    return {
-        id: Date.now(),  // Simples id local
-        title,
-        description,
-        status
-    };
-}
+// 
+saveTaskBtn.addEventListener("click", async () => {
+    const title = inputTitle.value.trim();
+    const description = inputDesc.value.trim();
+
+    if (!title) {
+        alert("A tarefa precisa de um título!");
+        return;
+    }
+
+    // 1. Envia os dados para a API
+    const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description })
+    });
+
+    if (response.ok) {
+        // 2. Pega a tarefa criada (com ID do DB) de volta
+        const newTask = await response.json();
+        
+        // 3. Adiciona na lista local e re-renderiza
+        tasks.push(newTask);
+        renderTasks();
+        closeModal();
+    } else {
+        alert("Falha ao salvar a tarefa.");
+    }
+});
 
 saveTaskBtn.addEventListener("click", () => {
     const title = inputTitle.value.trim();
