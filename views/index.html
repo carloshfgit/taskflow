@@ -1,54 +1,99 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>TaskFlow</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-</head>
-<body>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TaskFlow – Organize suas tarefas</title>
 
-    <header>
-        <div class="logo">TaskFlow</div>
-        <nav>
-            <a href="#">Entrar</a>
-            <a href="#" class="btn-primary">Criar Conta</a>
+    <!-- Fonte Inter -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body>
+    <!-- ============ HEADER ============ -->
+    <header class="header">
+        <div class="logo">
+            <h1>TaskFlow</h1>
+        </div>
+
+        <nav class="nav">
+            <a href="#" class="nav-link">Início</a>
+            <a href="#" class="nav-link">Sobre</a>
+            <a href="#" class="nav-link">Contato</a>
         </nav>
     </header>
 
-    <main class="hero">
-        <div class="hero-text">
-            <h1>Organize suas tarefas com eficiência.</h1>
-            <p>Gerencie seu fluxo de trabalho de forma visual, simples e direta com o sistema Kanban do TaskFlow.</p>
-            <button class="btn-primary" id="btn-start">Começar Agora</button>
-        </div>
-
-        <div class="hero-image">
-            <img src="/static/img/laptop_img.png" alt="Ilustração de produtividade">
-        </div>
-    </main>
-
-    <section class="features">
-        <div class="feature-card">
-            <h3>Organização Simples</h3>
-            <p>Mantenha todas as suas tarefas em um só lugar.</p>
-        </div>
-
-        <div class="feature-card">
-            <h3>Acompanhe seu Progresso</h3>
-            <p>Visualize o status de cada atividade facilmente.</p>
-        </div>
-
-        <div class="feature-card">
-            <h3>Produtividade Real</h3>
-            <p>Foque no que realmente importa ao longo do dia.</p>
+    <!-- ============ HERO / SECTION DE APRESENTAÇÃO ============ -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2 class="hero-title">Organize seu fluxo de trabalho com clareza</h2>
+            <p class="hero-subtitle">
+                Simplifique sua rotina, visualize suas tarefas e aumente sua produtividade com o TaskFlow.
+            </p>
+            <button id="btn-start" class="btn-primary">Nova Tarefa</button>
         </div>
     </section>
 
-    <footer>
-        © 2025 TaskFlow — Todos os direitos reservados.
-    </footer>
+    <!-- ============ PAINEL KANBAN ============ -->
+    <main class="kanban-container">
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+        <!-- COLUNA: TO DO -->
+        <div class="kanban-column" data-status="todo">
+            <div class="column-header">
+                <h3>To Do</h3>
+                <button class="add-task-btn">+</button>
+            </div>
+            <div class="task-list" id="todo-list">
+                <!-- Cards de tarefas renderizados via JS -->
+            </div>
+        </div>
+
+        <!-- COLUNA: DOING -->
+        <div class="kanban-column" data-status="doing">
+            <div class="column-header">
+                <h3>Doing</h3>
+                <button class="add-task-btn">+</button>
+            </div>
+            <div class="task-list" id="doing-list">
+                <!-- JS insere cards -->
+            </div>
+        </div>
+
+        <!-- COLUNA: DONE -->
+        <div class="kanban-column" data-status="done">
+            <div class="column-header">
+                <h3>Done</h3>
+                <button class="add-task-btn">+</button>
+            </div>
+            <div class="task-list" id="done-list">
+                <!-- JS insere cards -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ============ MODAL DE NOVA TAREFA (dinâmico via JS) ============ -->
+    <div id="task-modal" class="modal hidden">
+        <div class="modal-content">
+            <h3>Nova Tarefa</h3>
+
+            <label>Título</label>
+            <input type="text" id="task-title" placeholder="Digite o título..." />
+
+            <label>Descrição</label>
+            <textarea id="task-desc" placeholder="Digite a descrição..."></textarea>
+
+            <button id="save-task-btn" class="btn-primary">Salvar</button>
+            <button id="close-modal-btn" class="btn-secondary">Cancelar</button>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <!-- JS -->
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>
