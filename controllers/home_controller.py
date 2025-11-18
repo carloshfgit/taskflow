@@ -44,3 +44,20 @@ class HomeController:
             except Exception as e:
                 print(f"Erro inesperado: {e}")
                 return jsonify({"error": "Erro interno do servidor"}), 500
+        
+        # --- NOVA ROTA PARA O 'READ' ---
+        @self.app.route('/api/tasks', methods=['GET'])
+        def get_tasks():
+            try:
+                # 1. Chama o serviço para buscar as tarefas
+                all_tasks = self.task_service.get_all_tasks() # Retorna list[Task]
+                
+                # 2. Converte a lista de objetos Task em uma lista de dicionários
+                tasks_as_dict = [task.to_dict() for task in all_tasks]
+                
+                # 3. Retorna o JSON para o frontend
+                return jsonify(tasks_as_dict), 200 # 200 = OK
+            
+            except Exception as e:
+                print(f"Erro ao buscar tarefas: {e}")
+                return jsonify({"error": "Erro interno ao buscar tarefas"}), 500

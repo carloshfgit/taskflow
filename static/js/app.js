@@ -176,10 +176,25 @@ columns.forEach(column => {
 //  CARREGAR TAREFAS DA API 
 // ============================================================
 async function loadTasksFromAPI() {
-    // Por enquanto, vamos deixar o R (Read) de fora
-    // e começar com a lista vazia.
-    tasks = []; 
-    renderTasks();
+    try {
+        const response = await fetch('/api/tasks'); // 1. Faz a requisição GET
+        
+        if (!response.ok) {
+            throw new Error("Não foi possível carregar as tarefas.");
+        }
+        
+        const tasksFromServer = await response.json(); // 2. Pega o JSON
+        
+        tasks = tasksFromServer; // 3. Atualiza a lista local
+        
+        renderTasks(); // 4. Renderiza na tela
+        
+    } catch (error) {
+        console.error("Erro ao carregar tarefas:", error);
+        alert(error.message);
+        tasks = []; // Garante que a lista esteja vazia se falhar
+        renderTasks();
+    }
 }
 
 // Iniciar

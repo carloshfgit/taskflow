@@ -29,3 +29,12 @@ class TaskService:
         created_task = self.task_repository.add(new_task)
         
         return created_task
+    
+    # --- NOVO MÉTODO ---
+    def get_all_tasks(self) -> list[Task]:
+        """
+        Busca todas as tarefas.
+        """
+        # Para o "Read All", geralmente não há regras de negócio complexas
+        # Apenas repassamos a chamada para o repositório
+        return self.task_repository.get_all()

@@ -7,4 +7,8 @@ class BaseRepository(ABC):
     def add(self, item):
         pass
     
-    # (Aqui entrarão os outros métodos do CRUD: get, update, delete)
+    @abstractmethod
+    def get_all(self):
+        pass
+    
+    # (Aqui entrarão os outros métodos do CRUD: get_by_id, update, delete)
