@@ -101,12 +101,28 @@ function renderTasks() {
         card.setAttribute("draggable", "true");
         card.setAttribute("data-id", task.id);
 
+        // 1. ADICIONADO O BOTÃO DE EXCLUIR
         card.innerHTML = `
-            <h4>${task.title}</h4>
+            <div class="task-header">
+                <h4>${task.title}</h4>
+                <button class="delete-btn" data-id="${task.id}">X</button>
+            </div>
             <p>${task.description || ""}</p>
         `;
 
         enableDragEvents(card);
+        
+        // 2. ADICIONA O EVENT LISTENER PARA O BOTÃO DE EXCLUIR
+        card.querySelector(".delete-btn").addEventListener("click", (e) => {
+            e.stopPropagation(); // Impede o drag de começar sem querer
+            const idToDelete = e.target.getAttribute("data-id");
+            
+            // Confirmação com o usuário
+            if (confirm("Tem certeza que deseja excluir esta tarefa?")) {
+                deleteTask(idToDelete);
+            }
+        });
+
 
         if (task.status === "todo") todoList.appendChild(card);
         if (task.status === "doing") doingList.appendChild(card);
@@ -191,6 +207,33 @@ columns.forEach(column => {
         }
     });
 });
+
+// ============================================================
+//  FUNÇÃO DE EXCLUIR TAREFA (NOVA)
+// ============================================================
+async function deleteTask(id) {
+    try {
+        const response = await fetch(`/api/tasks/${id}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Falha ao excluir a tarefa.");
+        }
+
+        // Se a API confirmou a exclusão:
+        // 1. Remove a tarefa do array local 'tasks'
+        tasks = tasks.filter(task => task.id != id);
+        
+        // 2. Re-renderiza a UI
+        renderTasks();
+
+    } catch (error) {
+        console.error("Erro ao excluir tarefa:", error);
+        alert(error.message);
+    }
+}
 
 // ============================================================
 //  CARREGAR TAREFAS DA API 

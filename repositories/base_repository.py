@@ -19,3 +19,6 @@ class BaseRepository(ABC):
     def update(self, item):
         pass
     
+    @abstractmethod
+    def delete(self, item_id):
+        pass

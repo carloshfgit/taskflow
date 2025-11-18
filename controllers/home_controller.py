@@ -84,3 +84,27 @@ class HomeController:
             except Exception as e:
                 print(f"Erro inesperado ao atualizar: {e}")
                 return jsonify({"error": "Erro interno do servidor"}), 500
+        
+        # --- NOVA ROTA PARA O 'DELETE' ---
+        @self.app.route('/api/tasks/<int:task_id>', methods=['DELETE'])
+        def delete_task(task_id):
+            try:
+                # 1. Chama o serviço para excluir
+                success = self.task_service.delete_task(task_id)
+                
+                if success:
+                    # 2. Retorna uma mensagem de sucesso
+                    return jsonify({"success": True, "message": "Tarefa excluída"}), 200
+                else:
+                    # Isso não deve acontecer se a verificação do serviço funcionar
+                    return jsonify({"error": "Falha ao excluir tarefa"}), 500
+            
+            except ValueError as e: # Caso o serviço levante "Não encontrado"
+                return jsonify({"error": str(e)}), 404 # 404 = Not Found
+            
+            # except PermissionError as e: # Se você implementar regras de permissão
+            #     return jsonify({"error": str(e)}), 403 # 403 = Forbidden
+            
+            except Exception as e:
+                print(f"Erro inesperado ao excluir: {e}")
+                return jsonify({"error": "Erro interno do servidor"}), 500

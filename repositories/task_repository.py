@@ -132,3 +132,30 @@ class TaskRepository(BaseRepository):
         finally:
             if conn:
                 conn.close()
+
+    # --- NOVO MÉTODO ---
+    def delete(self, task_id: int) -> bool:
+        """
+        Exclui uma tarefa do banco de dados pelo seu ID.
+        Retorna True se a exclusão foi bem-sucedida, False caso contrário.
+        """
+        try:
+            conn = self._get_connection()
+            cursor = conn.cursor()
+            
+            sql = "DELETE FROM tasks WHERE id = ?"
+            cursor.execute(sql, (task_id,))
+            
+            conn.commit()
+            
+            # Verifica se alguma linha foi realmente afetada (excluída)
+            return cursor.rowcount > 0
+            
+        except sqlite3.Error as e:
+            print(f"Erro ao excluir tarefa: {e}")
+            conn.rollback()
+            return False
+        
+        finally:
+            if conn:
+                conn.close()

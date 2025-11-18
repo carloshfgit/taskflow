@@ -66,3 +66,25 @@ class TaskService:
         self.task_repository.update(task_to_update)
         
         return task_to_update
+    
+    # --- NOVO MÉTODO ---
+    def delete_task(self, task_id: int) -> bool:
+        """
+        Exclui uma tarefa.
+        Aplica regras de negócio (ex: permissões).
+        """
+        
+        # 1. ---- AQUI VIVEM AS REGRAS DE NEGÓCIO ----
+        # Exemplo: Verificar se o usuário tem permissão (requer login)
+        # user_permission = self.auth_service.check_permission(user_id, task_id)
+        # if not user_permission:
+        #     raise PermissionError("Usuário não tem permissão para excluir esta tarefa.")
+        # ---------------------------------------------
+        
+        # 2. (Opcional) Verificar se a tarefa existe antes de tentar deletar
+        task_to_delete = self.task_repository.get_by_id(task_id)
+        if not task_to_delete:
+            raise ValueError(f"Tarefa com ID {task_id} não encontrada.")
+            
+        # 3. Chama o repositório para excluir
+        return self.task_repository.delete(task_id)

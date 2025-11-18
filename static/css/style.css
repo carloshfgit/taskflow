@@ -183,6 +183,23 @@ body {
     margin-top: 4px;
 }
 
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.delete-btn {
+    background: none;
+    border: none;
+    color: #94A3B8;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+.delete-btn:hover {
+    color: #EF4444; 
+}
+
 /* ============================
    MODAL
 ============================ */
