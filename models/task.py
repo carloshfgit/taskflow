@@ -1,9 +1,15 @@
 class Task:
-    def __init__(self, id: int, title: str, description: str, status: str = "A Fazer"):
+    def __init__(self, title, description, status, id=None):
         self.id = id
         self.title = title
         self.description = description
-        self.status = status # Ex: "A Fazer", "Fazendo", "Concluído"
+        self.status = status # "todo", "doing", "done"
 
-    def __repr__(self):
-        return f"<Task {self.id}: {self.title} ({self.status})>"
+    # Essencial para serializar o objeto para a API
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "title": self.title,
+            "description": self.description,
+            "status": self.status
+        }

@@ -49,7 +49,7 @@ addButtons.forEach(btn => {
 //  CRIAR TAREFA
 // ============================================================
 // 
-saveTaskBtn.addEventListener("click", async () => {
+saveTaskBtn.addEventListener("click", async () => { // Marcamos como async
     const title = inputTitle.value.trim();
     const description = inputDesc.value.trim();
 
@@ -57,50 +57,35 @@ saveTaskBtn.addEventListener("click", async () => {
         alert("A tarefa precisa de um título!");
         return;
     }
-
-    // 1. Envia os dados para a API
-    const response = await fetch('/api/tasks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description })
-    });
-
-    if (response.ok) {
-        // 2. Pega a tarefa criada (com ID do DB) de volta
-        const newTask = await response.json();
-        
-        // 3. Adiciona na lista local e re-renderiza
-        tasks.push(newTask);
-        renderTasks();
-        closeModal();
-    } else {
-        alert("Falha ao salvar a tarefa.");
-    }
-});
-
-saveTaskBtn.addEventListener("click", () => {
-    const title = inputTitle.value.trim();
-    const description = inputDesc.value.trim();
-
-    if (!title) {
-        alert("A tarefa precisa de um título!");
-        return;
-    }
-
-    const newTask = createTask(title, description);
-    tasks.push(newTask);
-
-    renderTasks();
-    closeModal();
 
     // ========== INTEGRAR COM BACKEND AQUI ==========
-    // fetch('/api/tasks', {
-    //     method: 'POST',
-    //     headers: { 'Content-Type': 'application/json' },
-    //     body: JSON.stringify(newTask)
-    // });
-});
+    try {
+        const response = await fetch('/api/tasks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, description }) // Envia só o necessário
+        });
 
+        if (!response.ok) {
+            // Se o servidor retornar um erro (400, 500)
+            const errorData = await response.json();
+            throw new Error(errorData.error || "Falha na requisição");
+        }
+
+        // Pega a tarefa completa (com ID e status) de volta do servidor
+        const newTask = await response.json();
+
+        // Adiciona a tarefa (vinda do backend) à lista local
+        tasks.push(newTask);
+
+        renderTasks(); // Re-renderiza a tela
+        closeModal();
+
+    } catch (error) {
+        console.error("Erro ao salvar tarefa:", error);
+        alert(`Não foi possível salvar a tarefa: ${error.message}`);
+    }
+});
 
 // ============================================================
 //  RENDERIZAR TAREFAS NAS COLUNAS
@@ -188,15 +173,12 @@ columns.forEach(column => {
 
 
 // ============================================================
-//  CARREGAR TAREFAS DA API (FUTURO BACKEND)
+//  CARREGAR TAREFAS DA API 
 // ============================================================
 async function loadTasksFromAPI() {
-    // Exemplo de como seria:
-    // const response = await fetch('/api/tasks');
-    // tasks = await response.json();
-    // renderTasks();
-
-    // Por enquanto: vazio
+    // Por enquanto, vamos deixar o R (Read) de fora
+    // e começar com a lista vazia.
+    tasks = []; 
     renderTasks();
 }
 
