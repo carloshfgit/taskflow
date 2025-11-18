@@ -61,3 +61,26 @@ class HomeController:
             except Exception as e:
                 print(f"Erro ao buscar tarefas: {e}")
                 return jsonify({"error": "Erro interno ao buscar tarefas"}), 500
+    
+        @self.app.route('/api/tasks/<int:task_id>', methods=['PUT'])
+        def update_task(task_id):
+            try:
+                data = request.get_json()
+                new_status = data.get('status') # Pega o status do JSON
+
+                if not new_status:
+                    return jsonify({"error": "O 'status' é obrigatório"}), 400
+
+                # 1. Chama o serviço para fazer a atualização
+                updated_task = self.task_service.update_task_status(task_id, new_status)
+                
+                # 2. Retorna a tarefa (com status novo ou antigo,
+                #    dependendo da regra de negócio)
+                return jsonify(updated_task.to_dict()), 200
+            
+            except ValueError as e: # Caso o serviço levante "Não encontrado"
+                return jsonify({"error": str(e)}), 404 # 404 = Not Found
+            
+            except Exception as e:
+                print(f"Erro inesperado ao atualizar: {e}")
+                return jsonify({"error": "Erro interno do servidor"}), 500

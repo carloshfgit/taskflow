@@ -10,5 +10,12 @@ class BaseRepository(ABC):
     @abstractmethod
     def get_all(self):
         pass
+
+    @abstractmethod
+    def get_by_id(self, item_id):
+        pass
     
-    # (Aqui entrarão os outros métodos do CRUD: get_by_id, update, delete)
+    @abstractmethod
+    def update(self, item):
+        pass
+    

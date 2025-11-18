@@ -74,3 +74,61 @@ class TaskRepository(BaseRepository):
         finally:
             if conn:
                 conn.close()
+        
+    # --- NOVO MÉTODO ---
+    def get_by_id(self, task_id: int) -> Task | None:
+        """
+        Busca uma única tarefa pelo seu ID.
+        Retorna um objeto Task ou None se não for encontrada.
+        """
+        try:
+            conn = self._get_connection()
+            cursor = conn.cursor()
+            
+            sql = "SELECT * FROM tasks WHERE id = ?"
+            cursor.execute(sql, (task_id,))
+            
+            row = cursor.fetchone()
+            
+            if row:
+                return Task(
+                    id=row['id'],
+                    title=row['title'],
+                    description=row['description'],
+                    status=row['status']
+                )
+            return None # Não encontrou
+            
+        except sqlite3.Error as e:
+            print(f"Erro ao buscar tarefa por ID: {e}")
+            return None
+        
+        finally:
+            if conn:
+                conn.close()
+
+    # --- NOVO MÉTODO ---
+    def update(self, task: Task) -> None:
+        """
+        Atualiza uma tarefa existente no banco de dados.
+        """
+        try:
+            conn = self._get_connection()
+            cursor = conn.cursor()
+            
+            # Atualiza todos os campos baseando-se no ID
+            sql = """
+            UPDATE tasks 
+            SET title = ?, description = ?, status = ?
+            WHERE id = ?
+            """
+            cursor.execute(sql, (task.title, task.description, task.status, task.id))
+            conn.commit()
+            
+        except sqlite3.Error as e:
+            print(f"Erro ao atualizar tarefa: {e}")
+            conn.rollback()
+        
+        finally:
+            if conn:
+                conn.close()

@@ -139,38 +139,58 @@ const columns = document.querySelectorAll(".task-list");
 columns.forEach(column => {
     column.addEventListener("dragover", e => {
         e.preventDefault();
-        column.style.backgroundColor = "#E2E8F0";
+        // Feedback visual opcional
+        // column.style.backgroundColor = "#E2E8F0"; 
     });
 
-    column.addEventListener("dragleave", () => {
-        column.style.backgroundColor = "transparent";
-    });
+    // column.addEventListener("dragleave", () => {
+    //     column.style.backgroundColor = "transparent";
+    // });
 
-    column.addEventListener("drop", () => {
-        column.style.backgroundColor = "transparent";
+    column.addEventListener("drop", e => {
+        e.preventDefault();
+        // column.style.backgroundColor = "transparent";
+        
         if (draggedTask) {
-            column.appendChild(draggedTask);
+            column.appendChild(draggedTask); // 1. Atualiza a UI imediatamente
 
             const id = draggedTask.getAttribute("data-id");
+            const newStatus = column.id.replace('-list', ''); // "todo", "doing" ou "done"
+
+            // 2. Encontra a tarefa no array local
             const task = tasks.find(t => t.id == id);
+            
+            if (task && task.status !== newStatus) {
+                // 3. Atualiza o status no array local
+                task.status = newStatus;
 
-            if (task) {
-                // Atualizar o status baseado na coluna onde caiu
-                if (column.id === "todo-list") task.status = "todo";
-                if (column.id === "doing-list") task.status = "doing";
-                if (column.id === "done-list") task.status = "done";
-
-                // ========== ATUALIZAR NO BACKEND AQUI ==========
-                // fetch(`/api/tasks/${task.id}`, {
-                //     method: 'PUT',
-                //     headers: { 'Content-Type': 'application/json' },
-                //     body: JSON.stringify(task)
-                // });
+                // 4. ========== ATUALIZAR NO BACKEND AQUI ==========
+                // Envia a mudança para a API
+                fetch(`/api/tasks/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus }) // Envia só o novo status
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        // Se falhar (ex: regra de negócio barrou),
+                        // podemos recarregar tudo para reverter
+                        console.error("Falha ao atualizar o status da tarefa.");
+                        alert("Não foi possível mover a tarefa (regra de negócio?).");
+                        // Recarrega do zero para garantir consistência
+                        loadTasksFromAPI(); 
+                    }
+                    // Se der certo, não precisa fazer nada,
+                    // pois a UI e o array local já foram atualizados.
+                })
+                .catch(error => {
+                    console.error("Erro de rede:", error);
+                    loadTasksFromAPI(); // Reverte em caso de erro
+                });
             }
         }
     });
 });
-
 
 // ============================================================
 //  CARREGAR TAREFAS DA API 

@@ -38,3 +38,31 @@ class TaskService:
         # Para o "Read All", geralmente não há regras de negócio complexas
         # Apenas repassamos a chamada para o repositório
         return self.task_repository.get_all()
+    
+    # --- NOVO MÉTODO ---
+    def update_task_status(self, task_id: int, new_status: str) -> Task:
+        """
+        Atualiza o status de uma tarefa, aplicando regras de negócio.
+        """
+        # 1. Busca a tarefa
+        task_to_update = self.task_repository.get_by_id(task_id)
+        
+        if not task_to_update:
+            raise ValueError(f"Tarefa com ID {task_id} não encontrada.")
+            
+        # 2. ---- AQUI VIVEM AS REGRAS DE NEGÓCIO ----
+        # Exemplo de regra: não permitir mover de 'To Do' direto para 'Done'
+        is_invalid_move = task_to_update.status == "todo" and new_status == "done"
+        if is_invalid_move:
+            # Mantém o status antigo e não salva
+            print("Regra de negócio: Movimento inválido (todo -> done)")
+            return task_to_update # Retorna o objeto sem alteração
+        # ---------------------------------------------
+            
+        # 3. Atualiza o objeto
+        task_to_update.status = new_status
+        
+        # 4. Salva no repositório
+        self.task_repository.update(task_to_update)
+        
+        return task_to_update
