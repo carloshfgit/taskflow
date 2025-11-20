@@ -1,3 +1,4 @@
+#CAMADA DE MODELOS
 class Task:
     def __init__(self, title, description, status, id=None):
         self.id = id
@@ -5,7 +6,7 @@ class Task:
         self.description = description
         self.status = status # "todo", "doing", "done"
 
-    # Essencial para serializar o objeto para a API
+    #essencial para serializar o objeto para a API
     def to_dict(self):
         return {
             "id": self.id,

@@ -5,21 +5,21 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
 
-Um organizador de tarefas no estilo Kanban, desenvolvido como um projeto para a disciplina de Programação Orientada a Objetos. O foco principal é a aplicação dos princípios **SOLID** e uma arquitetura de software limpa em Python.
+Um organizador de tarefas no estilo Kanban, desenvolvido como um projeto para a disciplina de Programação Orientada a Objetos. O foco principal é a aplicação dos princípios **SOLID** e uma arquitetura de software orientada a objetos limpa em Python.
 
 ##  Tabela de Conteúdos
 
-1.  [Sobre o Projeto](#-sobre-o-projeto)
-2.  [Funcionalidades](#-funcionalidades)
-3.  [Arquitetura do Software](#-arquitetura-do-software)
-4.  [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-5.  [Como Executar](#-como-executar)
-6.  [Endpoints da API](#-api-endpoints)
-7.  [Licença](#-licença)
+1.  [Sobre o Projeto](#sobre-o-projeto)
+2.  [Funcionalidades](#funcionalidades)
+3.  [Arquitetura do Software](#arquitetura-do-software)
+4.  [Tecnologias Utilizadas](#tecnologias-utilizadas)
+5.  [Como Executar](#como-executar)
+6.  [Endpoints da API](#api-endpoints)
+7.  [Estrutura do Projeto](#estrutura-do-projeto)
 
 ---
 
-##  Sobre o Projeto
+## Sobre o Projeto
 
 O **TaskFlow** é uma aplicação web de página única (SPA) para gerenciamento de tarefas pessoais usando um painel Kanban com as colunas *To Do*, *Doing* e *Done*.
 
@@ -34,7 +34,7 @@ Até o momento, o projeto implementa o **CRUD** completo para as tarefas, consum
 * **[U]pdate (Atualizar):** Atualizar o status de uma tarefa (`todo`, `doing`, `done`) através de uma funcionalidade *drag-and-drop* intuitiva entre as colunas.
 * **[D]elete (Excluir):** Excluir tarefas permanentemente do painel e do banco de dados.
 
-##  Arquitetura do Software
+## Arquitetura do Software
 
 O backend foi projetado seguindo uma arquitetura limpa de 3 camadas para garantir a **separação de responsabilidades** (Single Responsibility Principle) e a **Inversão de Dependência** (Dependency Inversion Principle).
 
@@ -57,7 +57,7 @@ O backend foi projetado seguindo uma arquitetura limpa de 3 camadas para garanti
 
 O **`app.py`** (na raiz) atua como o ponto de entrada, realizando a **Injeção de Dependências** para "conectar" as camadas no início da aplicação.
 
-##  Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 * **Backend:**
     * Python 3
@@ -74,7 +74,7 @@ O **`app.py`** (na raiz) atua como o ponto de entrada, realizando a **Injeção 
     * Injeção de Dependência (DI)
     * Padrão Repositório (Repository Pattern)
 
-##  Como Executar
+## Como Executar
 
 Siga os passos abaixo para executar o projeto localmente.
 
@@ -114,7 +114,7 @@ Siga os passos abaixo para executar o projeto localmente.
 
 6.  Acesse `http://127.0.0.1:5000` no seu navegador.
 
-##  API Endpoints
+## API Endpoints
 
 O projeto expõe uma API RESTful para gerenciar as tarefas:
 
@@ -125,6 +125,36 @@ O projeto expõe uma API RESTful para gerenciar as tarefas:
 | `PUT` | `/api/tasks/<int:task_id>` | Atualiza o status de uma tarefa. <br> *Body: `{ "status": "doing" }`* |
 | `DELETE`| `/api/tasks/<int:task_id>` | Exclui uma tarefa. |
 
-##  Licença
+## Estrutura do Projeto
 
-Distribuído sob a licença MIT. Veja `LICENSE` para mais informações.
+Abaixo está a organização dos arquivos do projeto, demonstrando a separação física das camadas:
+
+```text
+taskflow/
+├── app.py                   # Ponto de entrada (Entry point) e DI Container
+├── controllers/             # Camada de Interface (API Routes)
+│   ├── __init__.py
+│   └── home_controller.py
+├── init_db.py               # Script de inicialização do banco
+├── models/                  # Modelos de dados (DTOs/Entidades)
+│   ├── __init__.py
+│   └── task.py
+├── repositories/            # Camada de Acesso a Dados
+│   ├── base_repository.py   # Interface (Contrato)
+│   ├── __init__.py
+│   └── task_repository.py   # Implementação SQL
+├── services/                # Camada de Regra de Negócio
+│   ├── __init__.py
+│   └── task_service.py
+├── static/                  # Arquivos estáticos (Frontend)
+│   ├── css/
+│   │   └── style.css
+│   ├── img/
+│   │   └── laptop_img.png
+│   └── js/
+│       └── app.js
+├── views/                   # Templates HTML
+│   └── index.html
+├── taskflow.db              # Arquivo do Banco de Dados SQLite
+├── requirements.txt         # Dependências do projeto
+└── README.md                # Documentação

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-# Classe base abstrata (Interface)
+#classe base abstrata (Interface)
 class BaseRepository(ABC):
     
     @abstractmethod

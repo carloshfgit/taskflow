@@ -1,6 +1,4 @@
-// ============================================================
-//  ELEMENTOS DA INTERFACE
-// ============================================================
+//elementos da interface
 const btnStart = document.getElementById("btn-start");
 const modal = document.getElementById("task-modal");
 const closeModalBtn = document.getElementById("close-modal-btn");
@@ -15,14 +13,12 @@ const doneList = document.getElementById("done-list");
 
 const addButtons = document.querySelectorAll(".add-task-btn");
 
-// Lista local de tarefas (antes da API Flask)
+//lista local de tarefas (antes da API Flask)
 let tasks = [];
 let draggedTask = null;
 
 
-// ============================================================
-//  MODAL – ABRIR E FECHAR
-// ============================================================
+//modal (janela) abrir e fechar
 function openModal() {
     if (!modal.classList.contains("hidden")) return;
     modal.classList.remove("hidden");
@@ -35,8 +31,6 @@ function closeModal() {
     inputDesc.value = "";
 }
 
-
-
 btnStart.addEventListener("click", openModal);
 closeModalBtn.addEventListener("click", closeModal);
 
@@ -45,11 +39,8 @@ addButtons.forEach(btn => {
 });
 
 
-// ============================================================
-//  CRIAR TAREFA
-// ============================================================
-// 
-saveTaskBtn.addEventListener("click", async () => { // Marcamos como async
+//criar tarefa
+saveTaskBtn.addEventListener("click", async () => { //marcamos como async
     const title = inputTitle.value.trim();
     const description = inputDesc.value.trim();
 
@@ -58,7 +49,7 @@ saveTaskBtn.addEventListener("click", async () => { // Marcamos como async
         return;
     }
 
-    // ========== INTEGRAR COM BACKEND AQUI ==========
+    //integracao com backend
     try {
         const response = await fetch('/api/tasks', {
             method: 'POST',
@@ -67,18 +58,18 @@ saveTaskBtn.addEventListener("click", async () => { // Marcamos como async
         });
 
         if (!response.ok) {
-            // Se o servidor retornar um erro (400, 500)
+            //se o servidor retornar um erro (400, 500)
             const errorData = await response.json();
             throw new Error(errorData.error || "Falha na requisição");
         }
 
-        // Pega a tarefa completa (com ID e status) de volta do servidor
+        //pega a tarefa completa (com ID e status) de volta do servidor
         const newTask = await response.json();
 
-        // Adiciona a tarefa (vinda do backend) à lista local
+        //adiciona a tarefa (vinda do backend) à lista local
         tasks.push(newTask);
 
-        renderTasks(); // Re-renderiza a tela
+        renderTasks(); //renderiza a tela
         closeModal();
 
     } catch (error) {
@@ -87,9 +78,7 @@ saveTaskBtn.addEventListener("click", async () => { // Marcamos como async
     }
 });
 
-// ============================================================
-//  RENDERIZAR TAREFAS NAS COLUNAS
-// ============================================================
+//renderizar tarefas nas colunas
 function renderTasks() {
     todoList.innerHTML = "";
     doingList.innerHTML = "";
@@ -101,7 +90,7 @@ function renderTasks() {
         card.setAttribute("draggable", "true");
         card.setAttribute("data-id", task.id);
 
-        // 1. ADICIONADO O BOTÃO DE EXCLUIR
+        //botao de excluir
         card.innerHTML = `
             <div class="task-header">
                 <h4>${task.title}</h4>
@@ -111,13 +100,12 @@ function renderTasks() {
         `;
 
         enableDragEvents(card);
-        
-        // 2. ADICIONA O EVENT LISTENER PARA O BOTÃO DE EXCLUIR
+
         card.querySelector(".delete-btn").addEventListener("click", (e) => {
             e.stopPropagation(); // Impede o drag de começar sem querer
             const idToDelete = e.target.getAttribute("data-id");
             
-            // Confirmação com o usuário
+            //confirmação com o usuário
             if (confirm("Tem certeza que deseja excluir esta tarefa?")) {
                 deleteTask(idToDelete);
             }
@@ -131,72 +119,62 @@ function renderTasks() {
 }
 
 
-// ============================================================
-//  DRAG & DROP DOS CARDS
-// ============================================================
+//drag and drop dos cards
 function enableDragEvents(card) {
 
-    // Início do arrasto
+    //início do arrasto
     card.addEventListener("dragstart", () => {
         draggedTask = card;
         card.style.opacity = "0.5";
     });
 
-    // Fim do arrasto
+    //fim do arrasto
     card.addEventListener("dragend", () => {
         draggedTask.style.opacity = "1";
         draggedTask = null;
     });
 }
 
-// Permitir soltar nas colunas
+//permitir soltar nas colunas
 const columns = document.querySelectorAll(".task-list");
 
 columns.forEach(column => {
     column.addEventListener("dragover", e => {
-        e.preventDefault();
-        // Feedback visual opcional
-        // column.style.backgroundColor = "#E2E8F0"; 
+        e.preventDefault(); 
     });
-
-    // column.addEventListener("dragleave", () => {
-    //     column.style.backgroundColor = "transparent";
-    // });
 
     column.addEventListener("drop", e => {
         e.preventDefault();
-        // column.style.backgroundColor = "transparent";
         
         if (draggedTask) {
-            column.appendChild(draggedTask); // 1. Atualiza a UI imediatamente
+            column.appendChild(draggedTask); //atualiza a UI imediatamente
 
             const id = draggedTask.getAttribute("data-id");
             const newStatus = column.id.replace('-list', ''); // "todo", "doing" ou "done"
 
-            // 2. Encontra a tarefa no array local
+            //encontra a tarefa no array local
             const task = tasks.find(t => t.id == id);
             
             if (task && task.status !== newStatus) {
-                // 3. Atualiza o status no array local
+                //atualiza o status no array local
                 task.status = newStatus;
 
-                // 4. ========== ATUALIZAR NO BACKEND AQUI ==========
-                // Envia a mudança para a API
+                //integracao com backend
                 fetch(`/api/tasks/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: newStatus }) // Envia só o novo status
+                    body: JSON.stringify({ status: newStatus })
                 })
                 .then(response => {
                     if (!response.ok) {
-                        // Se falhar (ex: regra de negócio barrou),
-                        // podemos recarregar tudo para reverter
+                        //se falhar (ex: regra de negócio barrou),
+                        //podemos recarregar tudo para reverter
                         console.error("Falha ao atualizar o status da tarefa.");
                         alert("Não foi possível mover a tarefa (regra de negócio?).");
-                        // Recarrega do zero para garantir consistência
+                        //recarrega do zero para garantir consistência
                         loadTasksFromAPI(); 
                     }
-                    // Se der certo, não precisa fazer nada,
+                    // se der certo, não precisa fazer nada,
                     // pois a UI e o array local já foram atualizados.
                 })
                 .catch(error => {
@@ -208,9 +186,7 @@ columns.forEach(column => {
     });
 });
 
-// ============================================================
-//  FUNÇÃO DE EXCLUIR TAREFA (NOVA)
-// ============================================================
+//excluir tarefa
 async function deleteTask(id) {
     try {
         const response = await fetch(`/api/tasks/${id}`, {
@@ -222,11 +198,11 @@ async function deleteTask(id) {
             throw new Error(errorData.error || "Falha ao excluir a tarefa.");
         }
 
-        // Se a API confirmou a exclusão:
-        // 1. Remove a tarefa do array local 'tasks'
+        //se a API confirmar a exclusão:
+        //remove a tarefa do array local 'tasks'
         tasks = tasks.filter(task => task.id != id);
         
-        // 2. Re-renderiza a UI
+        //renderiza a UI
         renderTasks();
 
     } catch (error) {
@@ -235,30 +211,28 @@ async function deleteTask(id) {
     }
 }
 
-// ============================================================
-//  CARREGAR TAREFAS DA API 
-// ============================================================
+//carregar tarefas da API
 async function loadTasksFromAPI() {
     try {
-        const response = await fetch('/api/tasks'); // 1. Faz a requisição GET
+        const response = await fetch('/api/tasks'); //faz a requisição GET
         
         if (!response.ok) {
             throw new Error("Não foi possível carregar as tarefas.");
         }
         
-        const tasksFromServer = await response.json(); // 2. Pega o JSON
+        const tasksFromServer = await response.json(); //pega o JSON
         
-        tasks = tasksFromServer; // 3. Atualiza a lista local
+        tasks = tasksFromServer; //atualiza a lista local
         
-        renderTasks(); // 4. Renderiza na tela
+        renderTasks(); //renderiza na tela
         
     } catch (error) {
         console.error("Erro ao carregar tarefas:", error);
         alert(error.message);
-        tasks = []; // Garante que a lista esteja vazia se falhar
+        tasks = []; //garante que a lista esteja vazia se falhar
         renderTasks();
     }
 }
 
-// Iniciar
+//iniciar
 loadTasksFromAPI();

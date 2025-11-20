@@ -1,3 +1,5 @@
+#CAMADA DE REPOSITORIOS
+#lida com toda a lógica de persistência (comandos SQL)
 import sqlite3
 from models.task import Task
 from .base_repository import BaseRepository
@@ -9,16 +11,16 @@ class TaskRepository(BaseRepository):
     def _get_connection(self):
         conn = sqlite3.connect(self.db_path)
         
-        # Isso faz com que o sqlite retorne as linhas como "dicionários"
-        # facilitando o acesso por nome de coluna (ex: row['title'])
+        #isso faz com que o sqlite retorne as linhas como "dicionários"
         conn.row_factory = sqlite3.Row 
         
         return conn
 
+    #CRIAR TAREFA (CREATE)
     def add(self, task: Task) -> Task:
         """
-        Adiciona uma nova tarefa ao banco de dados.
-        Retorna a tarefa com o ID preenchido.
+        adiciona uma nova tarefa ao banco de dados
+        retorna a tarefa com o ID preenchido
         """
         try:
             conn = self._get_connection()
@@ -40,10 +42,10 @@ class TaskRepository(BaseRepository):
             if conn:
                 conn.close()
 
-    # --- NOVO MÉTODO ---
+    #BUSCAR TAREFAS (READ)
     def get_all(self) -> list[Task]:
         """
-        Busca todas as tarefas do banco de dados.
+        busca todas as tarefas do banco de dados
         """
         tasks = []
         try:
@@ -55,7 +57,7 @@ class TaskRepository(BaseRepository):
             
             rows = cursor.fetchall()
             
-            # Converte cada linha do banco em um objeto Task
+            #converte cada linha do banco em um objeto Task
             for row in rows:
                 tasks.append(
                     Task(
@@ -69,17 +71,17 @@ class TaskRepository(BaseRepository):
             
         except sqlite3.Error as e:
             print(f"Erro ao buscar tarefas: {e}")
-            return [] # Retorna lista vazia em caso de erro
+            return [] #retorna lista vazia em caso de erro
         
         finally:
             if conn:
                 conn.close()
         
-    # --- NOVO MÉTODO ---
+    #BUSCAR POR ID (vou explorar melhor mais tarde)
     def get_by_id(self, task_id: int) -> Task | None:
         """
-        Busca uma única tarefa pelo seu ID.
-        Retorna um objeto Task ou None se não for encontrada.
+        busca uma única tarefa pelo seu ID
+        retorna um objeto Task ou None se não for encontrada
         """
         try:
             conn = self._get_connection()
@@ -97,7 +99,7 @@ class TaskRepository(BaseRepository):
                     description=row['description'],
                     status=row['status']
                 )
-            return None # Não encontrou
+            return None #não encontrou
             
         except sqlite3.Error as e:
             print(f"Erro ao buscar tarefa por ID: {e}")
@@ -107,7 +109,7 @@ class TaskRepository(BaseRepository):
             if conn:
                 conn.close()
 
-    # --- NOVO MÉTODO ---
+    #ATUALIZAR TAREFA (UPDATE)
     def update(self, task: Task) -> None:
         """
         Atualiza uma tarefa existente no banco de dados.
@@ -116,7 +118,7 @@ class TaskRepository(BaseRepository):
             conn = self._get_connection()
             cursor = conn.cursor()
             
-            # Atualiza todos os campos baseando-se no ID
+            #atualiza todos os campos baseando-se no ID
             sql = """
             UPDATE tasks 
             SET title = ?, description = ?, status = ?
@@ -133,11 +135,11 @@ class TaskRepository(BaseRepository):
             if conn:
                 conn.close()
 
-    # --- NOVO MÉTODO ---
+    #EXCLUIR TAREFAS (DELETE)
     def delete(self, task_id: int) -> bool:
         """
-        Exclui uma tarefa do banco de dados pelo seu ID.
-        Retorna True se a exclusão foi bem-sucedida, False caso contrário.
+        exclui uma tarefa do banco de dados pelo seu ID
+        retorna true se a exclusão foi bem-sucedida, false caso contrário
         """
         try:
             conn = self._get_connection()
@@ -148,7 +150,7 @@ class TaskRepository(BaseRepository):
             
             conn.commit()
             
-            # Verifica se alguma linha foi realmente afetada (excluída)
+            #verifica se alguma linha foi realmente afetada (excluída)
             return cursor.rowcount > 0
             
         except sqlite3.Error as e:

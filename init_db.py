@@ -1,13 +1,13 @@
 import sqlite3
 
-# Define o nome do arquivo do banco de dados
+#define o nome do arquivo do banco de dados
 DB_NAME = "taskflow.db"
 
-# Conecta ao banco de dados (ele será criado se não existir)
+#conecta ao banco de dados (ele será criado se não existir)
 conn = sqlite3.connect(DB_NAME)
 cursor = conn.cursor()
 
-# Cria a tabela 'tasks' se ela não existir
+#cria a tabela 'tasks' se ela não existir
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS tasks (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS tasks (
 );
 """)
 
-# Confirma as mudanças e fecha a conexão
+#confirma as mudanças e fecha a conexão
 conn.commit()
 conn.close()
 
