@@ -17,6 +17,15 @@ CREATE TABLE IF NOT EXISTS tasks (
 );
 """)
 
+#criia a tabela "users" se nao existiir
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL
+);
+""")
+
 #confirma as mudanças e fecha a conexão
 conn.commit()
 conn.close()
