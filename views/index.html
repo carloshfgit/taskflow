@@ -21,9 +21,12 @@
         </div>
 
         <nav class="nav">
-            <a href="#" class="nav-link">Início</a>
-            <a href="#" class="nav-link">Sobre</a>
-            <a href="#" class="nav-link">Contato</a>
+            {% if current_user.is_authenticated %}
+                <span class="nav-link" style="cursor: default;">Olá, <strong>{{ current_user.username }}</strong></span>
+                <a href="{{ url_for('logout') }}" class="nav-link" style="color: #EF4444;">Sair</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+            {% endif %}
         </nav>
     </header>
 

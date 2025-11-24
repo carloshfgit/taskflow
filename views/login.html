@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - TaskFlow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #F8FAFC; /* Mesma cor do body */
+        }
+        .error-msg { color: #EF4444; font-size: 14px; margin-bottom: 10px; text-align: center;}
+        .success-msg { color: #10B981; font-size: 14px; margin-bottom: 10px; text-align: center;}
+        .link-text { text-align: center; margin-top: 15px; font-size: 14px; color: #64748B; }
+        .link-text a { color: #3B82F6; text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <div class="modal-content" style="width: 400px;">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #3B82F6;">TaskFlow</h2>
+            <h3 style="text-align: center; margin-bottom: 20px;">Login</h3>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p class="{{ 'error-msg' if category == 'error' else 'success-msg' }}">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('login') }}" method="POST" style="display: flex; flex-direction: column; gap: 10px;">
+                
+                <label for="username">Usuário</label>
+                <input type="text" name="username" id="username" placeholder="Digite seu usuário" required>
+
+                <label for="password">Senha</label>
+                <input type="password" name="password" id="password" placeholder="Digite sua senha" required>
+
+                <button type="submit" class="btn-primary" style="margin-top: 10px;">Entrar</button>
+            </form>
+
+            <p class="link-text">
+                Ainda não tem conta? <a href="{{ url_for('register') }}">Cadastre-se</a>
+            </p>
+        </div>
+    </div>
+
+</body>
+</html>
