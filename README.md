@@ -76,7 +76,7 @@ A injeção de dependências é configurada no `app.py`, conectando as camadas d
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/seu-usuario/taskflow.git](https://github.com/seu-usuario/taskflow.git)
+    git clone [https://github.com/carloshfgit/taskflow.git](https://github.com/carloshfgit/taskflow.git)
     cd taskflow
     ```
 
