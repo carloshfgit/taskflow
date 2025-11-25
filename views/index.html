@@ -23,7 +23,15 @@
         <nav class="nav">
             {% if current_user.is_authenticated %}
                 <span class="nav-link" style="cursor: default;">Olá, <strong>{{ current_user.username }}</strong></span>
-                <a href="{{ url_for('logout') }}" class="nav-link" style="color: #EF4444;">Sair</a>
+                
+                <a href="{{ url_for('logout') }}" class="nav-link">Sair</a>
+                
+                <form action="{{ url_for('delete_account') }}" method="POST" style="display:inline;" onsubmit="return confirm('Tem certeza? Todas as suas tarefas serão apagadas permanentemente.');">
+                    <button type="submit" class="nav-link" style="background:none; border:none; color: #EF4444; cursor:pointer; font-size: 16px; font-weight: 500;">
+                        Excluir Conta
+                    </button>
+                </form>
+
             {% else %}
                 <a href="{{ url_for('login') }}" class="nav-link">Login</a>
             {% endif %}

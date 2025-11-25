@@ -41,3 +41,10 @@ class UserService:
         Método auxiliar necessário para o Flask-Login manter a sessão ativa.
         """
         return self.user_repository.get_by_id(user_id)
+    
+    def delete_user(self, user_id: int) -> bool:
+        """
+        Exclui o usuário do banco de dados.
+        Graças ao 'ON DELETE CASCADE' no banco, as tarefas somem automaticamente.
+        """
+        return self.user_repository.delete(user_id)

@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, flash
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from services.user_service import UserService
 
 class AuthController:
@@ -55,3 +55,25 @@ class AuthController:
         def logout():
             logout_user() # Destrói a sessão
             return redirect(url_for('login'))
+        
+        # ROTA PARA EXCLUIR CONTA
+        @self.app.route('/delete_account', methods=['POST']) # POST é mais seguro que GET para ações destrutivas
+        @login_required
+        def delete_account():
+            try:
+                # 1. Pega o ID do usuário logado
+                user_id = current_user.id
+                
+                # 2. Chama o serviço para deletar
+                self.user_service.delete_user(user_id)
+                
+                # 3. Faz logout forçado (limpa a sessão)
+                logout_user()
+                
+                flash('Sua conta e tarefas foram excluídas.', 'success')
+                return redirect(url_for('register')) # Redireciona para cadastro
+                
+            except Exception as e:
+                print(f"Erro ao excluir conta: {e}")
+                flash('Erro ao excluir conta.', 'error')
+                return redirect(url_for('index'))
