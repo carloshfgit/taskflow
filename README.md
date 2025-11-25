@@ -4,8 +4,9 @@
 ![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![Security](https://img.shields.io/badge/Security-Flask_Login-green?style=for-the-badge&logo=lock)
 
-Um organizador de tarefas no estilo Kanban, desenvolvido como um projeto para a disciplina de Programação Orientada a Objetos. O foco principal é a aplicação dos princípios **SOLID** e uma arquitetura de software orientada a objetos limpa em Python.
+Um organizador de tarefas no estilo Kanban, desenvolvido com foco em Arquitetura Limpa, princípios **SOLID** e segurança. O sistema agora é multi-usuário (SaaS), garantindo privacidade e isolamento de dados.
 
 ##  Tabela de Conteúdos
 
@@ -21,62 +22,57 @@ Um organizador de tarefas no estilo Kanban, desenvolvido como um projeto para a 
 
 ## Sobre o Projeto
 
-O **TaskFlow** é uma aplicação web de página única (SPA) para gerenciamento de tarefas pessoais usando um painel Kanban com as colunas *To Do*, *Doing* e *Done*.
+O **TaskFlow** é uma aplicação web completa para gerenciamento de produtividade pessoal. Diferente de listas de tarefas simples, ele utiliza um painel Kanban (*To Do*, *Doing*, *Done*) e oferece um ambiente seguro onde cada usuário tem acesso exclusivo aos seus próprios dados.
 
-Este projeto foi desenvolvido como avaliação para a disciplina de **Programação Orientada a Objetos (POO)**. O principal objetivo não era apenas criar uma ferramenta funcional, mas fazê-lo utilizando uma arquitetura robusta, seguindo os 5 princípios **SOLID** e padrões de design como a Injeção de Dependência e o padrão de Camadas (Repository, Service, Controller).
+Este projeto foi desenvolvido não apenas para entregar funcionalidade, mas para demonstrar a aplicação prática de padrões de engenharia de software robustos em Python, como **Injeção de Dependência**, **Repository Pattern** e **Autenticação Segura**.
 
 ##  Funcionalidades
 
-Até o momento, o projeto implementa o **CRUD** completo para as tarefas, consumindo uma API RESTful própria:
+O sistema implementa **CRUDs completos** para Tarefas e Usuários, além de regras de negócio de segurança:
 
-* **[C]reate (Criar):** Adicionar novas tarefas através de um modal.
-* **[R]ead (Ler):** Carregar e exibir todas as tarefas existentes no painel ao iniciar a aplicação.
-* **[U]pdate (Atualizar):** Atualizar o status de uma tarefa (`todo`, `doing`, `done`) através de uma funcionalidade *drag-and-drop* intuitiva entre as colunas.
-* **[D]elete (Excluir):** Excluir tarefas permanentemente do painel e do banco de dados.
+* **Autenticação e Segurança:**
+    * Sistema de Login e Cadastro de usuários.
+    * Criptografia de senhas (Hashing) no banco de dados.
+    * Controle de sessão seguro e rotas protegidas (`@login_required`).
+
+* **Multi-Tenancy (Multi-usuário):**
+    * Isolamento total de dados: cada usuário vê apenas as suas próprias tarefas.
+    * Validação de propriedade no backend (impede manipulação de tarefas de outros usuários via API).
+
+* **Gerenciamento de Tarefas:**
+    * **[C]reate:** Adicionar novas tarefas.
+    * **[R]ead:** Visualização em colunas Kanban.
+    * **[U]pdate:** Atualização de status via *drag-and-drop* intuitivo.
+    * **[D]elete:** Exclusão segura de tarefas.
 
 ## Arquitetura do Software
 
-O backend foi projetado seguindo uma arquitetura limpa de 3 camadas para garantir a **separação de responsabilidades** (Single Responsibility Principle) e a **Inversão de Dependência** (Dependency Inversion Principle).
-
-
+O backend segue uma arquitetura em 3 camadas (3-Tier) para garantir a **separação de responsabilidades** (SRP) e testabilidade.
 
 1.  **Camada de Controladores (`/controllers`)**
-    * Responsável por gerenciar as rotas da API (endpoints).
-    * Recebe requisições HTTP (JSON) e devolve respostas HTTP.
-    * Não contém regras de negócio. Apenas orquestra o fluxo, chamando a camada de serviço.
+    * Gerencia as rotas (Web e API).
+    * Lida com a sessão do usuário (Login/Logout).
+    * Não contém regras de negócio; apenas repassa dados para os serviços.
 
 2.  **Camada de Serviços (`/services`)**
-    * Contém toda a lógica e regras de negócio da aplicação.
-    * Ex: "Uma nova tarefa deve sempre ser criada com o status 'todo'".
-    * Depende da *abstração* do repositório (`BaseRepository`), não da implementação concreta.
+    * Coração da lógica de negócio e segurança.
+    * Exemplos de regras: "Criptografar senha antes de salvar", "Verificar se o usuário é dono da tarefa antes de excluir", "Tarefas novas nascem como 'todo'".
 
 3.  **Camada de Repositórios (`/repositories`)**
-    * É a única camada que "sabe" como falar com o banco de dados.
-    * Implementa uma interface (`BaseRepository`) e lida com toda a lógica de persistência (comandos SQL).
-    * Abstrai a fonte de dados (SQLite) do resto da aplicação.
+    * Responsável exclusivo pelo acesso ao dados (SQL).
+    * Implementa a interface `BaseRepository` para desacoplamento.
+    * Gerencia as tabelas `users` e `tasks` no SQLite.
 
-O **`app.py`** (na raiz) atua como o ponto de entrada, realizando a **Injeção de Dependências** para "conectar" as camadas no início da aplicação.
+A injeção de dependências é configurada no `app.py`, conectando as camadas de baixo para cima.
 
 ## Tecnologias Utilizadas
 
-* **Backend:**
-    * Python 3
-    * Flask (para o servidor web e API RESTful)
-* **Banco de Dados:**
-    * SQLite 3
-* **Frontend:**
-    * HTML5
-    * CSS3
-    * JavaScript (Vanilla JS, ES6+)
-* **Padrões e Princípios:**
-    * Arquitetura em Camadas (3-Tier)
-    * SOLID
-    * Injeção de Dependência (DI)
-    * Padrão Repositório (Repository Pattern)
+* **Backend:** Python 3, Flask, Flask-Login (Gestão de Sessão), Werkzeug (Segurança/Hash).
+* **Banco de Dados:** SQLite 3 (Com suporte a Chaves Estrangeiras).
+* **Frontend:** HTML5, CSS3, JavaScript (Vanilla ES6+).
+* **Padrões:** SOLID, Repository Pattern, Dependency Injection, MVC.
 
 ## Como Executar
-
-Siga os passos abaixo para executar o projeto localmente.
 
 1.  **Clone o repositório:**
     ```bash
@@ -84,77 +80,74 @@ Siga os passos abaixo para executar o projeto localmente.
     cd taskflow
     ```
 
-2.  **Crie e ative um ambiente virtual:**
+2.  **Crie e ative o ambiente virtual:**
     ```bash
     # Windows
     python -m venv venv
     .\venv\Scripts\activate
     
-    # macOS / Linux
+    # Linux/macOS
     python3 -m venv venv
     source venv/bin/activate
     ```
 
 3.  **Instale as dependências:**
-    *(Certifique-se de que seu `requirements.txt` contém `Flask`)*
     ```bash
     pip install -r requirements.txt
     ```
 
-4.  **Inicialize o banco de dados:**
-    *(Este comando só precisa ser executado uma vez para criar o arquivo `taskflow.db` e a tabela `tasks`)*
+4.  **Inicialize o Banco de Dados:**
     ```bash
     python init_db.py
     ```
+    *Isso criará o arquivo `taskflow.db` com as tabelas `users` e `tasks` configuradas.*
 
-5.  **Rode a aplicação:**
+5.  **Execute a aplicação:**
     ```bash
     python app.py
     ```
 
-6.  Acesse `http://127.0.0.1:5000` no seu navegador.
+6.  Acesse `http://127.0.0.1:5000`. Você será redirecionado para a tela de Login/Cadastro.
 
 ## API Endpoints
 
-O projeto expõe uma API RESTful para gerenciar as tarefas:
+A API é RESTful e todas as rotas abaixo são **protegidas** (requerem autenticação/sessão ativa).
 
 | Método | Rota | Descrição |
 | :--- | :--- | :--- |
-| `GET` | `/api/tasks` | Retorna uma lista de todas as tarefas. |
-| `POST` | `/api/tasks` | Cria uma nova tarefa. <br> *Body: `{ "title": "...", "description": "..." }`* |
-| `PUT` | `/api/tasks/<int:task_id>` | Atualiza o status de uma tarefa. <br> *Body: `{ "status": "doing" }`* |
-| `DELETE`| `/api/tasks/<int:task_id>` | Exclui uma tarefa. |
+| `POST` | `/login` | Autentica o usuário e cria a sessão. |
+| `POST` | `/register` | Cria um novo usuário. |
+| `GET` | `/api/tasks` | Retorna as tarefas **do usuário logado**. |
+| `POST` | `/api/tasks` | Cria tarefa para o usuário atual. |
+| `PUT` | `/api/tasks/<id>` | Atualiza status (apenas se for dono da tarefa). |
+| `DELETE`| `/api/tasks/<id>` | Exclui tarefa (apenas se for dono da tarefa). |
 
 ## Estrutura do Projeto
 
-Abaixo está a organização dos arquivos do projeto, demonstrando a separação física das camadas:
-
 ```text
 taskflow/
-├── app.py                   # Ponto de entrada (Entry point) e DI Container
-├── controllers/             # Camada de Interface (API Routes)
-│   ├── __init__.py
-│   └── home_controller.py
-├── init_db.py               # Script de inicialização do banco
-├── models/                  # Modelos de dados (DTOs/Entidades)
-│   ├── __init__.py
-│   └── task.py
-├── repositories/            # Camada de Acesso a Dados
-│   ├── base_repository.py   # Interface (Contrato)
-│   ├── __init__.py
-│   └── task_repository.py   # Implementação SQL
-├── services/                # Camada de Regra de Negócio
-│   ├── __init__.py
-│   └── task_service.py
-├── static/                  # Arquivos estáticos (Frontend)
-│   ├── css/
-│   │   └── style.css
-│   ├── img/
-│   │   └── laptop_img.png
-│   └── js/
-│       └── app.js
+├── app.py                   # Configuração, DI e App Entry point
+├── init_db.py               # Script de migração do banco
+├── controllers/             # Camada de Interface
+│   ├── auth_controller.py   # [NOVO] Login e Registro
+│   ├── home_controller.py   # Tarefas e Dashboard
+│   └── __init__.py
+├── services/                # Regras de Negócio e Segurança
+│   ├── user_service.py      # [NOVO] Lógica de usuários
+│   ├── task_service.py      # Lógica de tarefas
+│   └── __init__.py
+├── repositories/            # Acesso a Dados (SQL)
+│   ├── base_repository.py   # Interface
+│   ├── user_repository.py   # [NOVO] Tabela Users
+│   ├── task_repository.py   # Tabela Tasks
+│   └── __init__.py
+├── models/                  # Entidades
+│   ├── user.py              # [NOVO] Modelo User
+│   ├── task.py              # Modelo Task
+│   └── __init__.py
+├── static/                  # Assets (CSS/JS/Img)
 ├── views/                   # Templates HTML
-│   └── index.html
-├── taskflow.db              # Arquivo do Banco de Dados SQLite
-├── requirements.txt         # Dependências do projeto
-└── README.md                # Documentação
+│   ├── index.html           # Dashboard
+│   ├── login.html           # [NOVO] Tela de Login
+│   └── register.html        # [NOVO] Tela de Cadastro
+└── requirements.txt         # Dependências
