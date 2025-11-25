@@ -68,7 +68,7 @@ class UserRepository(BaseRepository):
             if conn: conn.close()
 
     # [R]EAD - Listar todos
-    def get_all(self) -> list[User]:
+    def get_all(self, **filters) -> list[User]:
         users = []
         try:
             conn = self._get_connection()

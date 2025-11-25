@@ -25,7 +25,7 @@ class TaskService:
     
     # [READ] Recebe user_id para filtrar
     def get_all_tasks(self, user_id: int) -> list[Task]:
-        return self.task_repository.get_all(user_id)
+        return self.task_repository.get_all(user_id=user_id)
     
     # [UPDATE] Verifica propriedade
     def update_task_status(self, task_id: int, new_status: str, user_id: int) -> Task:

@@ -33,13 +33,18 @@ class TaskRepository(BaseRepository):
             if conn: conn.close()
 
     # [READ] Agora filtra pelo user_id
-    def get_all(self, user_id: int) -> list[Task]:
+    def get_all(self, **filters) -> list[Task]:
+
+        user_id = filters.get('user_id')
+
+        if user_id is None:
+            return []
+
         tasks = []
         try:
             conn = self._get_connection()
             cursor = conn.cursor()
             
-            # FILTRO DE SEGURANÇA: WHERE user_id = ?
             sql = "SELECT * FROM tasks WHERE user_id = ? ORDER BY id"
             cursor.execute(sql, (user_id,))
             

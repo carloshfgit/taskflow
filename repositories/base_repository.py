@@ -8,7 +8,11 @@ class BaseRepository(ABC):
         pass
     
     @abstractmethod
-    def get_all(self):
+    def get_all(self, **filters): # MUDANÇA AQUI: Aceita filtros genéricos
+        """
+        Retorna todos os registos.
+        Pode receber filtros opcionais (ex: user_id=1).
+        """
         pass
 
     @abstractmethod
