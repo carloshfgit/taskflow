@@ -1,23 +1,16 @@
 import sqlite3
 
-#define o nome do arquivo do banco de dados
+# Define o nome do arquivo do banco de dados
 DB_NAME = "taskflow.db"
 
-#conecta ao banco de dados (ele será criado se não existir)
 conn = sqlite3.connect(DB_NAME)
 cursor = conn.cursor()
 
-#cria a tabela 'tasks' se ela não existir
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS tasks (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    description TEXT,
-    status TEXT NOT NULL
-);
-""")
+# 1. Habilita suporte a chaves estrangeiras (Foreign Keys)
+# Isso garante que não seja possível criar uma tarefa para um usuário que não existe
+cursor.execute("PRAGMA foreign_keys = ON;")
 
-#criia a tabela "users" se nao existiir
+# 2. Cria a tabela 'users' (se ainda não existir)
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -26,8 +19,24 @@ CREATE TABLE IF NOT EXISTS users (
 );
 """)
 
-#confirma as mudanças e fecha a conexão
+# 3. Recria a tabela 'tasks' com o vínculo de usuário
+# ATENÇÃO: DROP TABLE apaga todas as tarefas antigas para recriar a estrutura correta!
+cursor.execute("DROP TABLE IF EXISTS tasks;")
+
+cursor.execute("""
+CREATE TABLE tasks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    description TEXT,
+    status TEXT NOT NULL,
+    user_id INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);
+""")
+
+# Confirma as mudanças e fecha a conexão
 conn.commit()
 conn.close()
 
-print(f"Banco de dados '{DB_NAME}' e tabela 'tasks' criados com sucesso.")
+print(f"Banco de dados '{DB_NAME}' atualizado com sucesso!")
+print("Tabela 'tasks' recriada com coluna 'user_id'.")
