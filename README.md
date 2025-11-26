@@ -117,6 +117,8 @@ A API é RESTful e todas as rotas abaixo são **protegidas** (requerem autentica
 | :--- | :--- | :--- |
 | `POST` | `/login` | Autentica o usuário e cria a sessão. |
 | `POST` | `/register` | Cria um novo usuário. |
+| `GET` | `/logout` | Encerra a sessão do usuário (Logout). |
+| `POST` | `/delete_account` | Exclui permanentemente a conta e tarefas do usuário. |
 | `GET` | `/api/tasks` | Retorna as tarefas **do usuário logado**. |
 | `POST` | `/api/tasks` | Cria tarefa para o usuário atual. |
 | `PUT` | `/api/tasks/<id>` | Atualiza status (apenas se for dono da tarefa). |
