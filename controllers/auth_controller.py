@@ -1,3 +1,4 @@
+#CAMADA CONTROLLERS | rotas para login, cadastro, logout e exclusão de conta
 from flask import render_template, request, redirect, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from services.user_service import UserService
@@ -10,27 +11,27 @@ class AuthController:
 
     def register_routes(self):
         
-        # ROTA DE LOGIN
+        #ROTA DE LOGIN
         @self.app.route('/login', methods=['GET', 'POST'])
         def login():
             if request.method == 'POST':
                 username = request.form.get('username')
                 password = request.form.get('password')
                 
-                # Chama o serviço para verificar senha
+                #chama o serviço veriificador de senha
                 user = self.user_service.authenticate(username, password)
                 
                 if user:
-                    # SUCESSO: Cria a sessão do usuário
+                    # SUCESSO: cria a sessão do usuário
                     login_user(user)
                     return redirect(url_for('index')) # Redireciona para a home
                 else:
-                    # FALHA: Mostra mensagem de erro
+                    # FALHA: mostra mensagem de erro
                     flash('Usuário ou senha inválidos.', 'error')
             
             return render_template('login.html')
 
-        # ROTA DE REGISTRO (CADASTRO)
+        #ROTA DE CADASTRO
         @self.app.route('/register', methods=['GET', 'POST'])
         def register():
             if request.method == 'POST':
@@ -38,40 +39,39 @@ class AuthController:
                 password = request.form.get('password')
                 
                 try:
-                    # Chama o serviço para criar (já com hash)
+                    #chama o serviço para criar (já com hash)
                     self.user_service.create_user(username, password)
                     flash('Conta criada com sucesso! Faça login.', 'success')
                     return redirect(url_for('login'))
                 
                 except ValueError as e:
-                    # Erro de regra de negócio (ex: usuário já existe)
                     flash(str(e), 'error')
 
             return render_template('register.html')
 
         # ROTA DE LOGOUT
         @self.app.route('/logout')
-        @login_required # Só quem está logado pode deslogar
+        @login_required #só quem está logado pode deslogar
         def logout():
-            logout_user() # Destrói a sessão
+            logout_user() #destrói a sessão
             return redirect(url_for('login'))
         
-        # ROTA PARA EXCLUIR CONTA
-        @self.app.route('/delete_account', methods=['POST']) # POST é mais seguro que GET para ações destrutivas
+        #ROTA PARA EXCLUIR CONTA
+        @self.app.route('/delete_account', methods=['POST']) 
         @login_required
         def delete_account():
             try:
-                # 1. Pega o ID do usuário logado
+                #pega o ID do usuário logado
                 user_id = current_user.id
                 
-                # 2. Chama o serviço para deletar
+                #chama o serviço para deletar
                 self.user_service.delete_user(user_id)
                 
-                # 3. Faz logout forçado (limpa a sessão)
+                #faz logout forçado (limpa a sessão)
                 logout_user()
                 
                 flash('Sua conta e tarefas foram excluídas.', 'success')
-                return redirect(url_for('register')) # Redireciona para cadastro
+                return redirect(url_for('register')) #redireciona para cadastro
                 
             except Exception as e:
                 print(f"Erro ao excluir conta: {e}")

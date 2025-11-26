@@ -6,8 +6,8 @@ class User(UserMixin):
         self.username = username
         self.password_hash = password_hash
 
-    # Método útil para quando quisermos converter o usuário para JSON (API)
-    # IMPORTANTE: Nunca retornamos a senha/hash aqui por segurança!
+    #método útil para quando quisermos converter o usuário para JSON (API)
+    #nunca retornamos a senha/hash aqui por segurança
     def to_dict(self):
         return {
             "id": self.id,

@@ -1,4 +1,5 @@
-# CAMADA DE REPOSITORIOS
+#CAMADA DE REPOSITORIO | tarefas
+#este arquivo faz parte dos que podem falar com o database, sql puro
 import sqlite3
 from models.task import Task
 from .base_repository import BaseRepository
@@ -12,7 +13,7 @@ class TaskRepository(BaseRepository):
         conn.row_factory = sqlite3.Row 
         return conn
 
-    # [CREATE] Agora salva o user_id
+    # [CREATE] cria tarefa do usuario
     def add(self, task: Task) -> Task:
         try:
             conn = self._get_connection()
@@ -32,7 +33,7 @@ class TaskRepository(BaseRepository):
         finally:
             if conn: conn.close()
 
-    # [READ] Agora filtra pelo user_id
+    # [READ] le tarefas do usuario
     def get_all(self, **filters) -> list[Task]:
 
         user_id = filters.get('user_id')
@@ -68,7 +69,7 @@ class TaskRepository(BaseRepository):
         finally:
             if conn: conn.close()
         
-    # [READ ONE]
+    #busca tarefa por id
     def get_by_id(self, task_id: int) -> Task | None:
         try:
             conn = self._get_connection()
@@ -95,7 +96,7 @@ class TaskRepository(BaseRepository):
         finally:
             if conn: conn.close()
 
-    # [UPDATE]
+    # [UPDATE] atualiza tarefa 
     def update(self, task: Task) -> None:
         try:
             conn = self._get_connection()
@@ -115,7 +116,7 @@ class TaskRepository(BaseRepository):
         finally:
             if conn: conn.close()
 
-    # [DELETE]
+    # [DELETE] deleta tarefa
     def delete(self, task_id: int) -> bool:
         try:
             conn = self._get_connection()

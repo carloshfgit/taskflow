@@ -1,3 +1,5 @@
+#CAMADA DE REPOSITORIO | usuarios
+#este arquivo faz parte dos que podem falar com o database, sql puro
 import sqlite3
 from models.user import User
 from .base_repository import BaseRepository
@@ -11,7 +13,7 @@ class UserRepository(BaseRepository):
         conn.row_factory = sqlite3.Row 
         return conn
 
-    # [C]REATE
+    # [C]REATE cria novo usuario
     def add(self, user: User) -> User:
         try:
             conn = self._get_connection()
@@ -29,7 +31,7 @@ class UserRepository(BaseRepository):
         finally:
             if conn: conn.close()
 
-    # [R]EAD - Buscar por ID (Usado pelo Flask-Login para manter a sessão)
+    # [R]EAD buscar por ID (usado pelo Flask-Login para manter a sessão)
     def get_by_id(self, user_id: int) -> User | None:
         try:
             conn = self._get_connection()
@@ -48,7 +50,7 @@ class UserRepository(BaseRepository):
         finally:
             if conn: conn.close()
 
-    # [R]EAD - Buscar por Username (Essencial para o Login)
+    # [R]EAD buscar por username, essencial para login
     def get_by_username(self, username: str) -> User | None:
         try:
             conn = self._get_connection()
@@ -67,7 +69,7 @@ class UserRepository(BaseRepository):
         finally:
             if conn: conn.close()
 
-    # [R]EAD - Listar todos
+    # [R]EAD listar todos
     def get_all(self, **filters) -> list[User]:
         users = []
         try:
@@ -86,7 +88,7 @@ class UserRepository(BaseRepository):
         finally:
             if conn: conn.close()
 
-    # [U]PDATE - Atualizar senha ou nome (Exemplo genérico)
+    # [U]PDATE atualizar senha ou nome (implementarei melhor mais tarde)
     def update(self, user: User) -> None:
         try:
             conn = self._get_connection()
@@ -101,7 +103,7 @@ class UserRepository(BaseRepository):
         finally:
             if conn: conn.close()
 
-    # [D]ELETE
+    # [D]ELETE excluir conta
     def delete(self, user_id: int) -> bool:
         try:
             conn = self._get_connection()

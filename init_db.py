@@ -1,16 +1,17 @@
+#um script utilitário para criar o banco de dados e as tabelas iniciais.
 import sqlite3
 
-# Define o nome do arquivo do banco de dados
+#define o nome do arquivo do banco de dados
 DB_NAME = "taskflow.db"
 
 conn = sqlite3.connect(DB_NAME)
 cursor = conn.cursor()
 
-# 1. Habilita suporte a chaves estrangeiras (Foreign Keys)
-# Isso garante que não seja possível criar uma tarefa para um usuário que não existe
+#habilita suporte a chaves estrangeiras (Foreign Keys)
+#isso garante que não seja possível criar uma tarefa para um usuário que não existe
 cursor.execute("PRAGMA foreign_keys = ON;")
 
-# 2. Cria a tabela 'users' (se ainda não existir)
+#cria a tabela 'users' (se ainda não existir)
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,8 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 """)
 
-# 3. Recria a tabela 'tasks' com o vínculo de usuário
-# ATENÇÃO: DROP TABLE apaga todas as tarefas antigas para recriar a estrutura correta!
+#recria a tabela 'tasks' com o vínculo de usuário
 cursor.execute("DROP TABLE IF EXISTS tasks;")
 
 cursor.execute("""
@@ -34,7 +34,7 @@ CREATE TABLE tasks (
 );
 """)
 
-# Confirma as mudanças e fecha a conexão
+#confirma as mudanças e fecha a conexão
 conn.commit()
 conn.close()
 

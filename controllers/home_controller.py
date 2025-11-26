@@ -1,4 +1,4 @@
-# CAMADA DE CONTROLADORES
+# CAMADA DE CONTROLADORES | rotas para views, e rotas de tarefas
 from flask import render_template, request, jsonify
 from flask_login import login_required, current_user # Importamos o current_user
 from services.task_service import TaskService
@@ -15,10 +15,9 @@ class HomeController:
         @self.app.route('/')
         @login_required 
         def index():
-            # Renderiza o HTML. O current_user já está disponível no template
             return render_template('index.html')
 
-        # [CREATE] - Adicionar Tarefa
+        # [CREATE] adicionar Tarefa
         @self.app.route('/api/tasks', methods=['POST'])
         @login_required 
         def create_task():
@@ -28,7 +27,7 @@ class HomeController:
                 description = data.get('description')
                 
                 # MUDANÇA PRINCIPAL:
-                # Passamos o ID do usuário logado para o serviço
+                #agora passamos o ID do usuário logado para o serviço
                 user_id = current_user.id
                 
                 new_task = self.task_service.create_task(title, description, user_id)
@@ -45,13 +44,13 @@ class HomeController:
                 print(f"Erro inesperado: {e}")
                 return jsonify({"error": "Erro interno do servidor"}), 500
         
-        # [READ] - Listar Tarefas
+        # [READ] listar tarefas
         @self.app.route('/api/tasks', methods=['GET'])
         @login_required 
         def get_tasks():
             try:
                 # MUDANÇA PRINCIPAL:
-                # O serviço agora pede o ID para filtrar só as tarefas desse usuário
+                # o serviço agora pede o ID para filtrar só as tarefas desse usuário
                 user_id = current_user.id
                 
                 all_tasks = self.task_service.get_all_tasks(user_id)
@@ -63,7 +62,7 @@ class HomeController:
                 print(f"Erro ao buscar tarefas: {e}")
                 return jsonify({"error": "Erro interno ao buscar tarefas"}), 500
     
-        # [UPDATE] - Atualizar Status
+        # [UPDATE] atualizar Status
         @self.app.route('/api/tasks/<int:task_id>', methods=['PUT'])
         @login_required 
         def update_task(task_id):
@@ -75,28 +74,28 @@ class HomeController:
                     return jsonify({"error": "O 'status' é obrigatório"}), 400
 
                 # MUDANÇA PRINCIPAL:
-                # Passamos o user_id para o serviço verificar se somos donos da tarefa
+                # passamos o user_id para o serviço verificar se somos donos da tarefa
                 user_id = current_user.id
 
                 updated_task = self.task_service.update_task_status(task_id, new_status, user_id)
                 
                 return jsonify(updated_task.to_dict()), 200
             
-            except ValueError as e: # Erro de validação ou Acesso Negado
-                return jsonify({"error": str(e)}), 404 # Ou 403 Forbidden, mas 404 é mais seguro
+            except ValueError as e: 
+                return jsonify({"error": str(e)}), 404 
             
             except Exception as e:
                 print(f"Erro inesperado ao atualizar: {e}")
                 return jsonify({"error": "Erro interno do servidor"}), 500
         
-        # [DELETE] - Excluir Tarefa
+        # [DELETE] excluir Tarefa
         @self.app.route('/api/tasks/<int:task_id>', methods=['DELETE'])
         @login_required 
         def delete_task(task_id):
             try:
                 user_id = current_user.id
                 
-                # MUDANÇA PRINCIPAL: Verifica propriedade antes de deletar
+                # MUDANÇA PRINCIPAL: verifica propriedade antes de deletar
                 success = self.task_service.delete_task(task_id, user_id)
                 
                 if success:
