@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - TaskFlow</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <style>
+        /* Reutilizando estilos de auth para manter consistência */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #F8FAFC;
+            padding: 20px;
+        }
+        .form-group {
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #334155;
+        }
+        .hint {
+            font-size: 12px;
+            color: #64748B;
+            margin-top: -5px;
+            margin-bottom: 10px;
+        }
+        .error-msg { color: #EF4444; font-size: 14px; margin-bottom: 15px; text-align: center; background: #FEF2F2; padding: 8px; border-radius: 6px;}
+        .success-msg { color: #10B981; font-size: 14px; margin-bottom: 15px; text-align: center; background: #ECFDF5; padding: 8px; border-radius: 6px;}
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn-group button, .btn-group a {
+            flex: 1;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container">
+        <div class="modal-content" style="width: 100%; max-width: 450px;">
+            <h2 style="text-align: center; margin-bottom: 5px; color: #3B82F6;">TaskFlow</h2>
+            <h3 style="text-align: center; margin-bottom: 25px; color: #1E293B;">Editar Perfil</h3>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="{{ 'error-msg' if category == 'error' else 'success-msg' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('profile') }}" method="POST">
+                
+                <div class="form-group">
+                    <label for="new_username">Nome de Usuário</label>
+                    <input type="text" name="new_username" id="new_username" 
+                           value="{{ user.username }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="new_password">Nova Senha (Opcional)</label>
+                    <input type="password" name="new_password" id="new_password" 
+                           placeholder="Nova senha">
+                    <span class="hint">Deixe em branco se não quiser alterar a senha.</span>
+                </div>
+
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #E2E8F0;">
+
+                <div class="form-group">
+                    <label for="current_password" style="color: #0F172A; font-weight: 700;">Senha Atual</label>
+                    <input type="password" name="current_password" id="current_password" 
+                           placeholder="Confirme sua senha atual para salvar" required 
+                           style="border-color: #94A3B8;">
+                    <span class="hint">Necessário para confirmar qualquer alteração.</span>
+                </div>
+
+                <div class="btn-group">
+                    <a href="{{ url_for('index') }}" class="btn-secondary">Voltar</a>
+                    <button type="submit" class="btn-primary">Salvar Alterações</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
