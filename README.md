@@ -32,6 +32,7 @@ O sistema implementa **CRUDs completos** para Tarefas e Usuários, além de regr
 
 * **Autenticação e Segurança:**
     * Sistema de Login e Cadastro de usuários.
+    * Edição de Perfil (Alteração de nome e senha com validação de segurança).
     * Criptografia de senhas (Hashing) no banco de dados.
     * Controle de sessão seguro e rotas protegidas (`@login_required`).
 
@@ -123,6 +124,8 @@ A API é RESTful e todas as rotas abaixo são **protegidas** (requerem autentica
 | `POST` | `/api/tasks` | Cria tarefa para o usuário atual. |
 | `PUT` | `/api/tasks/<id>` | Atualiza status (apenas se for dono da tarefa). |
 | `DELETE`| `/api/tasks/<id>` | Exclui tarefa (apenas se for dono da tarefa). |
+| `GET`| `/profile` | Exibe o formulário de edição de perfil. |
+| `POST`| `/profile` | Processa a atualização de dados do usuário. |
 
 ## Estrutura do Projeto
 
@@ -131,7 +134,7 @@ taskflow/
 ├── app.py                   # Configuração, DI e App Entry point
 ├── init_db.py               # Script de migração do banco
 ├── controllers/             # Camada de Interface
-│   ├── auth_controller.py   # [NOVO] Login e Registro
+│   ├── auth_controller.py   # Login e Registro
 │   ├── home_controller.py   # Tarefas e Dashboard
 │   └── __init__.py
 ├── services/                # Regras de Negócio e Segurança
@@ -140,7 +143,7 @@ taskflow/
 │   └── __init__.py
 ├── repositories/            # Acesso a Dados (SQL)
 │   ├── base_repository.py   # Interface
-│   ├── user_repository.py   # [NOVO] Tabela Users
+│   ├── user_repository.py   # Tabela Users
 │   ├── task_repository.py   # Tabela Tasks
 │   └── __init__.py
 ├── models/                  # Entidades
@@ -150,6 +153,8 @@ taskflow/
 ├── static/                  # Assets (CSS/JS/Img)
 ├── views/                   # Templates HTML
 │   ├── index.html           # Dashboard
-│   ├── login.html           # [NOVO] Tela de Login
-│   └── register.html        # [NOVO] Tela de Cadastro
+│   ├── login.html           # Tela de Login
+│   └── register.html        # Tela de Cadastro
+|   └── profile.html         # Tela de Perfil
+
 └── requirements.txt         # Dependências

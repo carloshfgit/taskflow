@@ -49,18 +49,16 @@ class AuthController:
 
             return render_template('register.html')
 
-        # [NOVA ROTA] Perfil e Edição de Usuário
+        # ROTA DE EDIÇÃO DE USUÁRIO
         @self.app.route('/profile', methods=['GET', 'POST'])
         @login_required
         def profile():
             if request.method == 'POST':
-                # Coletamos os dados do input
                 current_password = request.form.get('current_password')
                 new_username = request.form.get('new_username')
                 new_password = request.form.get('new_password')
                 
                 try:
-                    # Chamamos o método seguro que criamos na Etapa 1
                     self.user_service.update_user_credentials(
                         user_id=current_user.id,
                         current_password=current_password,
@@ -69,16 +67,13 @@ class AuthController:
                     )
                     
                     flash('Perfil atualizado com sucesso!', 'success')
-                    # Recarregamos a página para mostrar os dados novos
                     return redirect(url_for('profile'))
                 
                 except ValueError as e:
-                    # Erros de negócio: Senha errada ou usuário já existente
+                    #erros de negócio: Senha errada ou usuário já existente
                     flash(str(e), 'error')
 
-            # Renderiza a view (que faremos na Etapa 3)
-            # O current_user já está disponível no template automaticamente pelo Flask-Login,
-            # mas podemos passar explicitamente se preferir.
+            #renderiza a view
             return render_template('profile.html', user=current_user)
 
         # ROTA DE LOGOUT
