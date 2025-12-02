@@ -88,8 +88,8 @@ class UserRepository(BaseRepository):
         finally:
             if conn: conn.close()
 
-    # [U]PDATE atualizar senha ou nome (implementarei melhor mais tarde)
-    def update(self, user: User) -> None:
+   # [U]PDATE atualizar senha ou nome
+    def update(self, user: User) -> bool: # Mudamos o retorno para bool
         try:
             conn = self._get_connection()
             cursor = conn.cursor()
@@ -97,9 +97,14 @@ class UserRepository(BaseRepository):
             sql = "UPDATE users SET username = ?, password_hash = ? WHERE id = ?"
             cursor.execute(sql, (user.username, user.password_hash, user.id))
             conn.commit()
+            
+            #verifica se alguma linha foi realmente alterada
+            return cursor.rowcount > 0
+            
         except sqlite3.Error as e:
             print(f"Erro ao atualizar usuário: {e}")
             conn.rollback()
+            return False #retorna explícito que falhou
         finally:
             if conn: conn.close()
 

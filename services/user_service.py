@@ -49,33 +49,37 @@ class UserService:
         """
         Atualiza nome de usuário e/ou senha, mediante confirmação da senha atual.
         """
-        # 1. Busca o usuário atual no banco
         user = self.user_repository.get_by_id(user_id)
         if not user:
             raise ValueError("Usuário não encontrado.")
 
-        # 2. Segurança: Verifica se a senha atual informada está correta
+        #verifica senha atual
         if not check_password_hash(user.password_hash, current_password):
             raise ValueError("A senha atual está incorreta.")
 
-        # 3. Validação de Username (apenas se mudou)
-        if new_username and new_username != user.username:
-            # Verifica se o novo nome já está em uso por outra pessoa
-            existing_user = self.user_repository.get_by_username(new_username)
-            if existing_user:
-                raise ValueError("Este nome de usuário já está em uso.")
-            user.username = new_username
+        #higienização e validação de Username
+        if new_username:
+            new_username = new_username.strip() #remove espaços extras
+            
+            if new_username != user.username:
+                #verifica se o novo nome já existe
+                existing_user = self.user_repository.get_by_username(new_username)
+                if existing_user:
+                    raise ValueError("Este nome de usuário já está em uso.")
+                user.username = new_username
 
-        # 4. Atualização de Senha (apenas se informado)
+        #atualização de Senha
         if new_password and new_password.strip():
-            user.password_hash = generate_password_hash(new_password)
+            user.password_hash = generate_password_hash(new_password.strip())
 
-        # 5. Persiste as mudanças no banco
-        self.user_repository.update(user)
+        #persistência com verificação de sucesso
+        success = self.user_repository.update(user)
+        if not success:
+            raise ValueError("Erro interno: Não foi possível salvar as alterações. Tente novamente.")
         
         return user
-
-    # deletar usuario
+    
+    #deletar usuario
     def delete_user(self, user_id: int) -> bool:
         """
         Exclui o usuário do banco de dados.
