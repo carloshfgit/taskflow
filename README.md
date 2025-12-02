@@ -73,7 +73,7 @@ A injeção de dependências é configurada no `app.py`, conectando as camadas d
 * **Frontend:** HTML5, CSS3, JavaScript (Vanilla ES6+).
 * **Padrões:** SOLID, Repository Pattern, Dependency Injection, MVC.
 
-## Como Executar
+## Como Executar (Use Python 3.11 ou superior)
 
 1.  **Clone o repositório:**
     ```bash
