@@ -37,8 +37,8 @@ user_service = UserService(user_repository=user_repo)
 
 #criando controllers
 auth_controller = AuthController(app, user_service) 
-# Nota: Na próxima etapa (3), passaremos o 'socketio' para o HomeController também
-home_controller = HomeController(app, task_service)
+# Passamos o socketio como terceiro parâmetro
+home_controller = HomeController(app, task_service, socketio)
 
 #USER LOADER
 @login_manager.user_loader

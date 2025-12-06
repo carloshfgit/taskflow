@@ -1,12 +1,14 @@
 # CAMADA DE CONTROLADORES | rotas para views, e rotas de tarefas
 from flask import render_template, request, jsonify
-from flask_login import login_required, current_user # Importamos o current_user
+from flask_login import login_required, current_user 
 from services.task_service import TaskService
 
 class HomeController:
-    def __init__(self, app, task_service: TaskService):
+    # [ALTERADO] Adicionamos 'socketio' ao construtor
+    def __init__(self, app, task_service: TaskService, socketio):
         self.app = app
         self.task_service = task_service
+        self.socketio = socketio # Guardamos a instância para usar nas rotas
         self.register_routes()
 
     def register_routes(self):
@@ -26,13 +28,14 @@ class HomeController:
                 title = data.get('title')
                 description = data.get('description')
                 
-                # MUDANÇA PRINCIPAL:
-                #agora passamos o ID do usuário logado para o serviço
                 user_id = current_user.id
                 
                 new_task = self.task_service.create_task(title, description, user_id)
                 
                 if new_task:
+                    # [NOVO] Emitir evento WebSocket para a sala do usuário
+                    self.socketio.emit('update_board', {'action': 'create'}, room=f"user_{user_id}")
+                    
                     return jsonify(new_task.to_dict()), 201
                 else:
                     return jsonify({"error": "Falha ao criar tarefa"}), 500
@@ -49,12 +52,8 @@ class HomeController:
         @login_required 
         def get_tasks():
             try:
-                # MUDANÇA PRINCIPAL:
-                # o serviço agora pede o ID para filtrar só as tarefas desse usuário
                 user_id = current_user.id
-                
                 all_tasks = self.task_service.get_all_tasks(user_id)
-                
                 tasks_as_dict = [task.to_dict() for task in all_tasks]
                 return jsonify(tasks_as_dict), 200 
             
@@ -73,12 +72,13 @@ class HomeController:
                 if not new_status:
                     return jsonify({"error": "O 'status' é obrigatório"}), 400
 
-                # MUDANÇA PRINCIPAL:
-                # passamos o user_id para o serviço verificar se somos donos da tarefa
                 user_id = current_user.id
 
                 updated_task = self.task_service.update_task_status(task_id, new_status, user_id)
                 
+                # [NOVO] Emitir evento WebSocket
+                self.socketio.emit('update_board', {'action': 'update'}, room=f"user_{user_id}")
+
                 return jsonify(updated_task.to_dict()), 200
             
             except ValueError as e: 
@@ -95,10 +95,12 @@ class HomeController:
             try:
                 user_id = current_user.id
                 
-                # MUDANÇA PRINCIPAL: verifica propriedade antes de deletar
                 success = self.task_service.delete_task(task_id, user_id)
                 
                 if success:
+                    # [NOVO] Emitir evento WebSocket
+                    self.socketio.emit('update_board', {'action': 'delete'}, room=f"user_{user_id}")
+                    
                     return jsonify({"success": True, "message": "Tarefa excluída"}), 200
                 else:
                     return jsonify({"error": "Falha ao excluir tarefa"}), 500
