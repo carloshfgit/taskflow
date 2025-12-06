@@ -1,3 +1,18 @@
+// --- CONFIGURAÇÃO DO WEBSOCKET ---
+const socket = io(); // Conecta automaticamente ao servidor atual
+
+socket.on('connect', () => {
+    console.log(">> Conectado ao servidor WebSocket!");
+});
+
+// Ouve o evento 'update_board' que criamos no Python
+socket.on('update_board', (data) => {
+    console.log(">> Atualização recebida:", data);
+    
+    // Simplesmente recarregamos a lista da API para garantir que tudo esteja sincronizado
+    loadTasksFromAPI(); 
+});
+
 //elementos da interface
 const btnStart = document.getElementById("btn-start");
 const modal = document.getElementById("task-modal");
@@ -12,6 +27,7 @@ const doingList = document.getElementById("doing-list");
 const doneList = document.getElementById("done-list");
 
 const addButtons = document.querySelectorAll(".add-task-btn");
+
 
 //lista local de tarefas (antes da API Flask)
 let tasks = [];
