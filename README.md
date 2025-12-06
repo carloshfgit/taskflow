@@ -1,10 +1,10 @@
 # TaskFlow Kanban 
 
 ![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python)
-![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
-![Security](https://img.shields.io/badge/Security-Flask_Login-green?style=for-the-badge&logo=lock)
+![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
+![Socket.IO](https://img.shields.io/badge/Socket.IO-Real_Time-black?style=for-the-badge&logo=socket.io)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
 Um organizador de tarefas no estilo Kanban, desenvolvido com foco em Arquitetura Limpa, princípios **SOLID** e segurança. O sistema agora é multi-usuário (SaaS), garantindo privacidade e isolamento de dados.
 
@@ -46,6 +46,9 @@ O sistema implementa **CRUDs completos** para Tarefas e Usuários, além de regr
     * **[U]pdate:** Atualização de status via *drag-and-drop* intuitivo.
     * **[D]elete:** Exclusão segura de tarefas.
 
+* **Tempo Real (WebSockets):**
+    * Atualização automática da interface: ao criar, editar ou mover uma tarefa, a alteração é refletida instantaneamente em todas as janelas abertas do usuário logado.
+
 ## Arquitetura do Software
 
 O backend segue uma arquitetura em 3 camadas (3-Tier) para garantir a **separação de responsabilidades** (SRP) e testabilidade.
@@ -68,7 +71,7 @@ A injeção de dependências é configurada no `app.py`, conectando as camadas d
 
 ## Tecnologias Utilizadas
 
-* **Backend:** Python 3, Flask, Flask-Login (Gestão de Sessão), Werkzeug (Segurança/Hash).
+* **Backend:** Python 3, Flask, Flask-Login (Gestão de Sessão), Flask-SocketIO (WebSockets), Werkzeug (Segurança/Hash).
 * **Banco de Dados:** SQLite 3 (Com suporte a Chaves Estrangeiras).
 * **Frontend:** HTML5, CSS3, JavaScript (Vanilla ES6+).
 * **Padrões:** SOLID, Repository Pattern, Dependency Injection, MVC.
